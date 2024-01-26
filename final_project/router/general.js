@@ -32,7 +32,7 @@ public_users.get('/author/:author',function (req, res) {
   var specific_author = {};                                                 //object to hold books
   for(key in books){
     if(books[key].author == author){                                        //author matches 
-        specific_author[`${key}`] = books[key];                             //add book in isbn:book format
+      specific_author[`${key}`] = books[key];                             //add book in isbn:book format
     }//if
   }//for
   if(Object.keys(specific_author).length === 0){
@@ -45,8 +45,19 @@ public_users.get('/author/:author',function (req, res) {
 
 // Get all books based on title
 public_users.get('/title/:title',function (req, res) {
-  //Write your code here
-  return res.status(300).json({message: "Yet to be implemented"});
+    const title = req.params.title;                                         //store given title
+    var specific_title = {};                                                //object to hold books
+    for(key in books){
+      if(books[key].title == title){                                        //title matches 
+        specific_title[`${key}`] = books[key];                              //add book in isbn:book format
+      }//if
+    }//for
+    if(Object.keys(specific_title).length === 0){
+      res.send("");                                                         //send nothing- no match
+    }//if
+    else{
+      res.send(specific_title);                                             //send object of book(s) with title
+    }//else
 });
 
 //  Get book review
