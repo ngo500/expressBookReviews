@@ -18,13 +18,29 @@ public_users.get('/',function (req, res) {
 // Get book details based on ISBN
 public_users.get('/isbn/:isbn',function (req, res) {
   const isbn = req.params.isbn;                                             //store given isbn
-  res.send(books[isbn]);                                                    //send book with isbn
+  if(books[isbn]){
+    res.send(books[isbn]);                                                  //send book with isbn
+  }//if
+  else{
+    res.send("");                                                           //send nothing- no match
+  }//else
  });
   
 // Get book details based on author
 public_users.get('/author/:author',function (req, res) {
-  //Write your code here
-  return res.status(300).json({message: "Yet to be implemented"});
+  const author = req.params.author;                                         //store given author
+  var specific_author = {};                                                 //object to hold books
+  for(key in books){
+    if(books[key].author == author){                                        //author matches 
+        specific_author[`${key}`] = books[key];                             //add book in isbn:book format
+    }//if
+  }//for
+  if(Object.keys(specific_author).length === 0){
+    res.send("");                                                           //send nothing- no match
+  }//if
+  else{
+    res.send(specific_author);                                              //send object of book(s) with author
+  }//else
 });
 
 // Get all books based on title
