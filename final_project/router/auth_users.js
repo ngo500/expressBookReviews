@@ -29,7 +29,7 @@ const authenticatedUser = (username,password)=>{ //returns boolean
       }//else
 }//authenticatedUser
 
-//only registered users can login
+//POST- only registered users can login
 regd_users.post("/login", (req,res) => {
     const username = req.body.username;                                         //store given username
     const password = req.body.password;                                         //store given password
@@ -53,7 +53,7 @@ regd_users.post("/login", (req,res) => {
     }//else
 });
 
-// Add a book review
+// PUT- Add a book review
 regd_users.put("/auth/review/:isbn", (req, res) => {
   //Write your code here
   return res.status(300).json({message: "Yet to be implemented"});
