@@ -27,19 +27,31 @@ public_users.get('/',function (req, res) {
         resolve(books);
     });
     getAllBooksPromise
-        .then((books) =>
-            res.send(JSON.stringify({books},null,4)));                    //send all books
+        .then((books) => {
+            res.send(JSON.stringify({books},null,4))                        //send all books
+        }, 
+        (error) => {
+            res.status(404).json({message: "Error getting books: " + error});          //error- something went wrong
+        });                     
 });
 
 // GET book details based on ISBN
 public_users.get('/isbn/:isbn',function (req, res) {
-  const isbn = req.params.isbn;                                             //store given isbn
-  if(books[isbn]){
-    res.send(books[isbn]);                                                  //send book with isbn
-  }//if
-  else{
-    res.send("");                                                           //send nothing- no match
-  }//else
+  const getBookBasedOnIsbnPromise = new Promise((resolve, reject) => {      //create promisee
+    resolve(req.params.isbn);                                               //resolve given isbn
+  });
+  getBookBasedOnIsbnPromise
+        .then((isbn) => {
+          if(books[isbn]){
+            res.send(books[isbn]);                                          //send book with isbn
+          }//if
+          else{
+            res.send("");                                                   //send nothing- no match
+          }//else
+        },
+        (error) => {
+            res.status(404).json({message: "Error getting book: " + error});          //error- something went wrong
+        });
  });
   
 // GET book details based on author
