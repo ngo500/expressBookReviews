@@ -81,19 +81,27 @@ public_users.get('/author/:author',function (req, res) {
 
 // GET all books based on title
 public_users.get('/title/:title',function (req, res) {
-    const title = req.params.title;                                         //store given title
-    var specific_title = {};                                                //object to hold books
-    for(key in books){
-      if(books[key].title == title){                                        //title matches 
-        specific_title[`${key}`] = books[key];                              //add book in isbn:book format
-      }//if
-    }//for
-    if(Object.keys(specific_title).length === 0){
-      res.send("");                                                         //send nothing- no match
-    }//if
-    else{
-      res.send(specific_title);                                             //send object of book(s) with title
-    }//else
+    const getBookBasedOnTitlePromise = new Promise((resolve, reject) =>{    //create promise
+      resolve(req.params.title);                                            //resolve given title    
+    });
+    getBookBasedOnTitlePromise
+        .then((title) => {
+          var specific_title = {};                                          //object to hold books
+          for(key in books){
+            if(books[key].title == title){                                  //title matches 
+              specific_title[`${key}`] = books[key];                        //add book in isbn:book format
+            }//if
+          }//for
+          if(Object.keys(specific_title).length === 0){
+            res.send("");                                                   //send nothing- no match
+          }//if
+          else{
+            res.send(specific_title);                                       //send object of book(s) with title
+          }//else
+        },
+        (error) => {
+            res.status(404).json({message: "Error getting book: " + error});//error- something went wrong
+        });
 });
 
 //  GET book review based on isbn
