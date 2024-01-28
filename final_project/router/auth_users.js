@@ -1,6 +1,7 @@
 const express = require('express');
 const jwt = require('jsonwebtoken');
 let books = require("./booksdb.js");
+const e = require('express');
 const regd_users = express.Router();
 
 let users = [];
@@ -60,7 +61,7 @@ regd_users.put("/auth/review/:isbn", (req, res) => {
     const review = req.body.review;                                             //store given review
     const username = req.body.username;                                         //store current username
 
-    books[isbn].reviews[username] = review;                                    //add/update review
+    books[isbn].reviews[username] = review;                                     //add/update review
     
     return res.status(200).send("User successfully added review!");             //return review confirmation message
   }//if
@@ -69,9 +70,19 @@ regd_users.put("/auth/review/:isbn", (req, res) => {
   }//else
 });
 
-// DELETE- Delete a book
+// DELETE- Delete a book review
 regd_users.delete("/auth/review/:isbn", (req, res) => {
-    return res.status(300).json({message: "Yet to be implemented"});
+    const isbn = req.params.isbn;                                               //store given isbn
+    if(books[isbn]){
+        const username = req.body.username;                                     //store current username
+        if(books[isbn].reviews[username]){
+            delete books[isbn].reviews[username];                               //delete the review for this user 
+        }//if
+        return res.status(200).send("User successfully deleted review!");       //return delete confirmation message
+    }//if
+    else{
+      return res.status(404).json({message: "Cannot review- book not found."}); //no book match- send error message
+    }//else
 });
 
 module.exports.authenticated = regd_users;
