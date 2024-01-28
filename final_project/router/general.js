@@ -4,7 +4,7 @@ let isValid = require("./auth_users.js").isValid;
 let users = require("./auth_users.js").users;
 const public_users = express.Router();
 
-// Post a new user
+// POST a new user
 public_users.post("/register", (req,res) => {
     const username = req.body.username;                                     //store given username
     const password = req.body.password;                                     //store given password
@@ -21,12 +21,17 @@ public_users.post("/register", (req,res) => {
     }//else
 });
 
-// Get the book list available in the shop
+// GET the book list available in the shop
 public_users.get('/',function (req, res) {
-    res.send(JSON.stringify({books},null,4));                               //send all books
+    const getAllBooksPromise = new Promise((resolve, reject) => {           //create promise
+        resolve(books);
+    });
+    getAllBooksPromise
+        .then((books) =>
+            res.send(JSON.stringify({books},null,4)));                    //send all books
 });
 
-// Get book details based on ISBN
+// GET book details based on ISBN
 public_users.get('/isbn/:isbn',function (req, res) {
   const isbn = req.params.isbn;                                             //store given isbn
   if(books[isbn]){
@@ -37,7 +42,7 @@ public_users.get('/isbn/:isbn',function (req, res) {
   }//else
  });
   
-// Get book details based on author
+// GET book details based on author
 public_users.get('/author/:author',function (req, res) {
   const author = req.params.author;                                         //store given author
   var specific_author = {};                                                 //object to hold books
@@ -54,7 +59,7 @@ public_users.get('/author/:author',function (req, res) {
   }//else
 });
 
-// Get all books based on title
+// GET all books based on title
 public_users.get('/title/:title',function (req, res) {
     const title = req.params.title;                                         //store given title
     var specific_title = {};                                                //object to hold books
@@ -71,7 +76,7 @@ public_users.get('/title/:title',function (req, res) {
     }//else
 });
 
-//  Get book review
+//  GET book review based on isbn
 public_users.get('/review/:isbn',function (req, res) {
   const isbn = req.params.isbn;                                             //store given isbn
   if(books[isbn].reviews){
