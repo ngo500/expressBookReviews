@@ -31,7 +31,7 @@ public_users.get('/',function (req, res) {
             res.send(JSON.stringify({books},null,4))                        //send all books
         }, 
         (error) => {
-            res.status(404).json({message: "Error getting books: " + error});          //error- something went wrong
+            res.status(404).json({message: "Error getting books: " + error});//error- something went wrong
         });                     
 });
 
@@ -50,25 +50,33 @@ public_users.get('/isbn/:isbn',function (req, res) {
           }//else
         },
         (error) => {
-            res.status(404).json({message: "Error getting book: " + error});          //error- something went wrong
+            res.status(404).json({message: "Error getting book: " + error});//error- something went wrong
         });
  });
   
 // GET book details based on author
 public_users.get('/author/:author',function (req, res) {
-  const author = req.params.author;                                         //store given author
-  var specific_author = {};                                                 //object to hold books
-  for(key in books){
-    if(books[key].author == author){                                        //author matches 
-      specific_author[`${key}`] = books[key];                             //add book in isbn:book format
-    }//if
-  }//for
-  if(Object.keys(specific_author).length === 0){
-    res.send("");                                                           //send nothing- no match
-  }//if
-  else{
-    res.send(specific_author);                                              //send object of book(s) with author
-  }//else
+  const getBookBasedOnAuthorPromise = new Promise((resolve, reject) =>{     //create promise
+    resolve(req.params.author);                                             //resolve given author
+  });
+  getBookBasedOnAuthorPromise
+        .then((author) => {
+          var specific_author = {};                                         //object to hold books
+          for(key in books){
+            if(books[key].author == author){                                //author matches 
+              specific_author[`${key}`] = books[key];                       //add book in isbn:book format
+            }//if
+          }//for
+          if(Object.keys(specific_author).length === 0){
+            res.send("");                                                   //send nothing- no match
+          }//if
+          else{
+            res.send(specific_author);                                      //send object of book(s) with author
+          }//else
+        },
+        (error) => {
+            res.status(404).json({message: "Error getting book: " + error});//error- something went wrong
+        });
 });
 
 // GET all books based on title
